@@ -73,9 +73,13 @@ python open-docs.py
 ## TODO
 
 [ ] - Implement ID3
+
 [ ] - Implement Gini Index
+
 [ ] - Implement Information Gain
+
 [ ] - Implement Chi-Square testing in ID3
+
 [ ] - Write up final report
 
 
