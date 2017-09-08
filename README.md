@@ -57,7 +57,7 @@ python dtree.py --data-file $path_to_data_file
 
 ## Documentation
 
-This module uses documentation complied by sphinx located in the `docs/` directory. First, the documentation must be built:
+This module uses documentation complied by [sphinx](http://www.sphinx-doc.org/en/stable/) located in the `docs/` directory. First, the documentation must be built:
 
 ```bash
 make docs
