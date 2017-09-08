@@ -34,7 +34,40 @@ deactivate
 
 ## Usage
 
-How to use the code
+The main entry point for this project is `dtree.py`. Use the `-h` flag from any command to see help:
+
+```bash
+>>> python dtree.py -h
+usage: dtree.py [-h] [--data-file DATA_FILE]
+
+Creates decision trees based on a given data file.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --data-file DATA_FILE
+                        Path to the data file to use.
+```
+
+Create a decision tree for a given data file:
+
+```bash
+python dtree.py --data-file $path_to_data_file
+```
+
+
+## Documentation
+
+This module uses documentation complied by sphinx located in the `docs/` directory. First, the documentation must be built:
+
+```bash
+make docs
+```
+
+Once the documentation is built, it can be viewed in your brower by running the `open-docs.py` script:
+
+```bash
+python open-docs.py
+```
 
 
 ## Authors
