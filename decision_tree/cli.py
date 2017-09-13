@@ -5,7 +5,11 @@ import argparse
 
 
 def parse_args():
-    """Parse CLI arguments."""
+    """Parse CLI arguments.
+
+    :rtype: dict
+    :returns: Dictonairy of parsed cli arguments.
+    """
 
     # argument parser object
     parser = argparse.ArgumentParser(

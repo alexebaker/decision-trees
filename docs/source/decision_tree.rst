@@ -12,10 +12,18 @@ decision\_tree\.cli module
     :undoc-members:
     :show-inheritance:
 
-decision\_tree\.decision\_tree module
--------------------------------------
+decision\_tree\.dtree module
+----------------------------
 
-.. automodule:: decision_tree.decision_tree
+.. automodule:: decision_tree.dtree
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+decision\_tree\.id3 module
+--------------------------
+
+.. automodule:: decision_tree.id3
     :members:
     :undoc-members:
     :show-inheritance:
