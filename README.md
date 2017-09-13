@@ -25,6 +25,12 @@ Next, activate the virtualenv in your current shell:
 source .venv/bin/activate
 ```
 
+Now, install the python requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
 You can deactivate the virtualenv with the following command:
 
 ```bash
