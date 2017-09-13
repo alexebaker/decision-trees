@@ -38,20 +38,27 @@ The main entry point for this project is `dtree.py`. Use the `-h` flag from any 
 
 ```bash
 >>> python dtree.py -h
-usage: dtree.py [-h] [--data-file DATA_FILE]
+usage: dtree.py [-h] [--training-data TRAINING_DATA]
+                [--testing-data TESTING_DATA]
+                [--classification-file CLASSIFICATION_FILE]
 
 Creates decision trees based on a given data file.
 
 optional arguments:
   -h, --help            show this help message and exit
-  --data-file DATA_FILE
-                        Path to the data file to use.
+  --training-data TRAINING_DATA
+                        Path to the training data file.
+  --testing-data TESTING_DATA
+                        Path to the test data file.
+  --classification-file CLASSIFICATION_FILE
+                        Path to the classification file to write the results
+                        of the testing data.
 ```
 
 Create a decision tree for a given data file:
 
 ```bash
-python dtree.py --data-file $path_to_data_file
+python dtree.py --training-data data/training.csv --testing-data data/testing.csv
 ```
 
 
