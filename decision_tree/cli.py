@@ -13,8 +13,19 @@ def parse_args():
 
     # Add arguments to the parser
     parser.add_argument(
-        '--data-file',
+        '--training-data',
         type=argparse.FileType(mode='r'),
-        help='Path to the data file to use.')
+        help='Path to the training data file.')
+
+    parser.add_argument(
+        '--testing-data',
+        type=argparse.FileType(mode='r'),
+        help='Path to the test data file.')
+
+    parser.add_argument(
+        '--classification-file',
+        type=argparse.FileType(mode='w'),
+        default='./classification.csv',
+        help='Path to the classification file to write the results of the testing data.')
 
     return vars(parser.parse_args())
