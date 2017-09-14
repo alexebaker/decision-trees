@@ -2,6 +2,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import sys
+import math
 
 from decision_tree.id3 import ID3Tree
 
@@ -22,6 +23,33 @@ def info_gain():
     :returns: The calculated information gain for the given parameters.
     """
     return
+
+def entropy(p_value):
+    total=0
+    for p in p_value:
+      if p!=0:
+          total-= p*math.log(p)
+    return total
+
+def dna_p_value(dna_data):
+    """Calculates probabilty of each of the 3 classes for a set of strands
+    """
+    ei_count=0
+    ie_count=0
+    n_count=0
+    total=0
+    for dna in dna_data:
+       total+=1
+       if dna['class']=='IE':
+            ie_count+=1
+       elif dna['class']=='EI':
+            ei_count+=1
+       else:
+            n_count+=1
+    try:
+       return (ei_count / total, ie_count / total, n_count / total)
+    except ZeroDivisionError:
+       print ("empty list cannot produce probability")
 
 
 def chi_square():
