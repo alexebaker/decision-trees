@@ -52,14 +52,66 @@ def dna_p_value(dna_data):
        print ("empty list cannot produce probability")
 
 
-def chi_square():
-    """Calculates the chi square for the given parameters.
+def chi_square(e_values, o_values, dof, alpha):
+    x2= chi_sq_dist(dof, alpha)
+    xc2=0
+    for i in range(0,dof+1):
+      xc2+= ((o_values[i]- e_values[i])**2)/e_values[i]
+    print(x2)
+    print(xc2)
+    #reject null hypothesis
+    if xc2>x2:
+      return False
+    else:
+      return True
 
-    :rtype: ?
-    :returns: The calculated chi square for the given parameters.
-    """
-    return
-
+def chi_sq_dist(dof, alpha):
+   dof2 =[
+     {'alpha': 0.20 ,'crit_val': 3.219},
+     {'alpha': 0.10 ,'crit_val': 4.605},
+     {'alpha': 0.05 ,'crit_val': 5.991},
+     {'alpha': 0.025 ,'crit_val': 7.378},
+     {'alpha': 0.02 ,'crit_val': 7.824},
+     {'alpha': 0.01 ,'crit_val': 9.210},
+     {'alpha': 0.005 ,'crit_val': 10.597},
+     {'alpha': 0.002 ,'crit_val': 12.429},
+     {'alpha': 0.001 ,'crit_val': 13.816}
+   ]
+   dof3 =[
+     {'alpha': 0.20 ,'crit_val': 4.642},
+     {'alpha': 0.10 ,'crit_val': 6.251},
+     {'alpha': 0.05 ,'crit_val': 7.815},
+     {'alpha': 0.025 ,'crit_val': 9.348},
+     {'alpha': 0.02 ,'crit_val': 9.837},
+     {'alpha': 0.01 ,'crit_val': 11.345},
+     {'alpha': 0.005 ,'crit_val': 12.838},
+     {'alpha': 0.002 ,'crit_val': 14.796},
+     {'alpha': 0.001 ,'crit_val': 16.266}
+   ]
+   dof7 =[
+     {'alpha': 0.20 ,'crit_val': 9.803},
+     {'alpha': 0.10 ,'crit_val': 12.017},
+     {'alpha': 0.05 ,'crit_val': 14.067},
+     {'alpha': 0.025 ,'crit_val': 16.013},
+     {'alpha': 0.02 ,'crit_val': 16.622},
+     {'alpha': 0.01 ,'crit_val': 18.475},
+     {'alpha': 0.005 ,'crit_val': 20.278},
+     {'alpha': 0.002 ,'crit_val': 22.601},
+     {'alpha': 0.001 ,'crit_val': 24.322}
+   ]
+   dofX = []
+   if dof==2:
+     dofX=dof2
+   elif dof==3:
+     dofX=dof3
+   elif dof==7:
+     dofX=dof7
+   else:
+     print ("Unsupported degree of freedom used!")
+     return 0
+   for cv in dofX:
+     if cv['alpha']==alpha:
+       return cv['crit_val']
 
 def parse_data(data_file):
     """Parses the data out of the data file and into a format used by the ID3 algorithm.
