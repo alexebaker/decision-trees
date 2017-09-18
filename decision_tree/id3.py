@@ -238,6 +238,15 @@ class ID3Node(object):
     def create_subtree(self):
         attrs = range(0, len(self.dna_data[0]['attrs']))
         values = ['A', 'G', 'T', 'C']
+        #values = ['A', 'G', 'T', 'C', 'D', 'N', 'S', 'R']
+
+        # Currently, there are two data set, 1424 and 1425 that have the attrs but different classes.
+        # This causes infinite recursion. I think this will be fixed when we implement chi-squared splitting.
+        # But for now, this test will prevent the inifinite recursion.
+        test_attrs = [dna['attrs'] for dna in self.dna_data]
+        if test_attrs.count(test_attrs[0]) == len(test_attrs):
+            self.cls = self.dna_data[0]['class']
+            return
 
         # Check is all of the data is the same class, if it is, then this is a leaf node with that class.
         cls = data_class(self.dna_data)
@@ -257,16 +266,8 @@ class ID3Node(object):
         # create children the get a subset of the data based on the value of the data at the split attr
         for value in values:
             split_data = get_subset(self.dna_data, value, split_attr)
-
-            # Currently, there are two data set, 1424 and 1425 that have the attrs but different classes.
-            # This causes infinite recursion. I think this will be fixed when we implement chi-squared splitting.
-            # But for now, this test will prevent the inifinite recursion.
             if split_data:
-                tested_attrs = [dna['attrs'] for dna in split_data]
-                if not (tested_attrs.count(tested_attrs[0]) == len(tested_attrs)):
-                    self.add_child(split_data, value)
-                else:
-                    self.cls = split_data[0]['class']
+                self.add_child(split_data, value)
 
         # Recursively create subtrees
         for child in self.children:
