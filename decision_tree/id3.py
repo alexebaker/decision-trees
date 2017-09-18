@@ -28,6 +28,17 @@ def get_subset(dna_data, value, attr):
     for dna in dna_data:
         if dna['attrs'][attr] == value:
             subset.append(dna)
+        elif dna['attrs'][attr] == 'D':
+            if any([value=='A',value=='G',value=='T']):
+                subset.append(dna)
+        elif dna['attrs'][attr] == 'N':
+            subset.append(dna)
+        elif dna['attrs'][attr] == 'S':
+            if any([value=='C',value=='G']):
+                subset.append(dna)
+        elif dna['attrs'][attr] == 'R':
+            if any([value=='A',value=='G']):
+                subset.append(dna)
     return subset
 
 
