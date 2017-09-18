@@ -87,10 +87,7 @@ def chi_square(e_values, o_values, dof, alpha):
     print(xc2)
 
     # reject null hypothesis
-    if xc2 > x2:
-        return False
-    else:
-        return True
+    return not xc2 > x2
 
 
 def chi_sq_dist(dof, alpha):
@@ -156,7 +153,9 @@ class ID3Tree(object):
 
     def create_tree(self):
         """Creates a new decision tree based on the given data."""
-        self.root.create_subtree()
+        attrs = range(0, len(self.root.dna_data[0]['attrs']))
+        values = ['A', 'G', 'T', 'C']
+        self.root.create_subtree(values, attrs)
         return
 
     def classify_data(self, data):
@@ -184,7 +183,7 @@ class ID3Node(object):
     dna_data = []
     value = ''
     attr = 0
-    cls = 'N'  # Setting to N for testing purposes
+    cls = ''
 
     def __init__(self, parent, dna_data=[], value=0):
         self.parent = parent
@@ -225,7 +224,8 @@ class ID3Node(object):
         :param attrs: Attributes to clasify given from testing data.
 
         :rtype: string
-        :returns: The classification for the given attrs, or None if there is not one
+        :returns: The classification for the given attrs,
+                  or None if there is not one
         """
         if self.is_leaf():
             return self.cls
@@ -235,23 +235,26 @@ class ID3Node(object):
                     return child.get_class(attrs)
         return None
 
-    def create_subtree(self):
-        attrs = range(0, len(self.dna_data[0]['attrs']))
-        values = ['A', 'G', 'T', 'C']
-        #values = ['A', 'G', 'T', 'C', 'D', 'N', 'S', 'R']
-
-        # Currently, there are two data set, 1424 and 1425 that have the attrs but different classes.
-        # This causes infinite recursion. I think this will be fixed when we implement chi-squared splitting.
-        # But for now, this test will prevent the inifinite recursion.
-        test_attrs = [dna['attrs'] for dna in self.dna_data]
-        if test_attrs.count(test_attrs[0]) == len(test_attrs):
-            self.cls = self.dna_data[0]['class']
-            return
-
-        # Check is all of the data is the same class, if it is, then this is a leaf node with that class.
+    def create_subtree(self, values, attrs):
+        # Check is all of the data is the same class, if it is,
+        # then this is a leaf node with that class.
         cls = data_class(self.dna_data)
         if cls:
             self.cls = cls
+            return
+
+        # If no attrs are left to test,
+        # then pick the class that occurs the most
+        if not attrs:
+            print(len(self.dna_data))
+            p_values = dna_p_value(self.dna_data)
+            max_p = max(p_values)
+            if p_values[0] is max_p:
+                self.cls = 'EI'
+            elif p_values[1] is max_p:
+                self.cls = 'IE'
+            else:
+                self.cls = 'N'
             return
 
         # calculate the gain for each attr
@@ -259,17 +262,22 @@ class ID3Node(object):
         for attr in attrs:
             gain.append(info_gain(self.dna_data, values, attr))
 
-        # gets the attr with the largest gain value, which is the attr we are going to split the tree at
+        # gets the attr with the largest gain value,
+        # which is the attr we are going to split the tree at
         split_attr = gain.index(max(gain))
-        self.attr = split_attr
+        self.attr = attrs[split_attr]
+        attrs.remove(self.attr)
 
-        # create children the get a subset of the data based on the value of the data at the split attr
+        # create children the get a subset of the data
+        # based on the value of the data at the split attr
         for value in values:
             split_data = get_subset(self.dna_data, value, split_attr)
             if split_data:
                 self.add_child(split_data, value)
+            else:
+                self.add_child(self.dna_data, value)
 
         # Recursively create subtrees
         for child in self.children:
-            child.create_subtree()
+            child.create_subtree(values, attrs)
         return
