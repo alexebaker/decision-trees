@@ -87,7 +87,7 @@ python open-docs.py
 
 - [ ] - Implement ID3
 - [ ] - Implement Gini Index
-- [ ] - Implement Information Gain
+- [x] - Implement Information Gain
 - [ ] - Implement Chi-Square testing in ID3
 - [ ] - Write up final report
 
