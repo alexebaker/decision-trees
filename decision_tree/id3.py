@@ -144,8 +144,8 @@ def chi_sq_dist(dof, alpha):
 class ID3Tree(object):
     root = None
 
-    def __init__(self, dna_data=[]):
-        self.root = ID3Node(None, dna_data=dna_data)
+    def __init__(self, dna_data=[], use_gini_index=False):
+        self.root = ID3Node(None, dna_data=dna_data, use_gini_index=False)
 
         if dna_data:
             self.create_tree()
@@ -185,12 +185,15 @@ class ID3Node(object):
     attr = 0
     cls = ''
 
-    def __init__(self, parent, dna_data=[], value=0):
+    use_gini_index = False
+
+    def __init__(self, parent, dna_data=[], value=0, use_gini_index=False):
         self.parent = parent
         self.children = []
 
         self.value = value
         self.dna_data = dna_data
+        self.use_gini_index = use_gini_index
         return
 
     def is_leaf(self):
@@ -211,7 +214,10 @@ class ID3Node(object):
 
     def add_child(self, dna_data, value):
         """Adds a child ID3Node to this node."""
-        self.children.append(ID3Node(self, dna_data=dna_data, value=value))
+        self.children.append(ID3Node(self,
+                                     dna_data=dna_data,
+                                     value=value,
+                                     use_gini_index=self.use_gini_index))
         return
 
     def get_class(self, attrs):
@@ -260,7 +266,11 @@ class ID3Node(object):
         # calculate the gain for each attr
         gain = []
         for attr in attrs:
-            gain.append(info_gain(self.dna_data, values, attr))
+            if self.use_gini_index:
+                # code for gini index here
+                gain.append(0)
+            else:
+                gain.append(info_gain(self.dna_data, values, attr))
 
         # gets the attr with the largest gain value,
         # which is the attr we are going to split the tree at

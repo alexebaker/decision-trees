@@ -32,4 +32,9 @@ def parse_args():
         default='./classification.csv',
         help='Path to the classification file to write the results of the testing data.')
 
+    parser.add_argument(
+        '--gini-index',
+        action='store_true',
+        help='Whether or not to use gini-index instead of information gain.')
+
     return vars(parser.parse_args())
