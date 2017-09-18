@@ -4,14 +4,21 @@ from __future__ import division
 
 import math
 
+def gini_value(dna_data):
+    """takes the probabilty of each classification and multiplies them together"""
+    p_values = dna_p_value(dna_data)
+    gini_value = 1
+    if p_values ==None:
+        return 0
+    else:
+       for p in p_values:
+           gini_value*=p
+       return gini_value
 
-def gini_index():
-    """Calculates the Gini Index for the given parameters.
-
-    :rtype: ?
-    :returns: The calculated Gini Index for the given parameters.
-    """
-    return
+def gini_gain(dna_data, values, attr):
+    subset = get_subset(dna_data, values, attr)
+    gain = gini_value(dna_data) - gini_value(subset)
+    return gain
 
 
 def data_class(dna_data):
@@ -279,7 +286,7 @@ class ID3Node(object):
         for attr in attrs:
             if self.use_gini_index:
                 # code for gini index here
-                gain.append(0)
+                gain.append(gini_gain(self.dna_data, values, attr))
             else:
                 gain.append(info_gain(self.dna_data, values, attr))
 
