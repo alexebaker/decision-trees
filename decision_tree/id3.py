@@ -175,7 +175,7 @@ class ID3Tree(object):
 
     def create_tree(self):
         """Creates a new decision tree based on the given data."""
-        attrs = range(0, len(self.root.dna_data[0]['attrs']))
+        attrs = list(range(0, len(self.root.dna_data[0]['attrs'])))
         values = ['A', 'G', 'T', 'C']
         self.root.create_subtree(values, attrs)
         return
