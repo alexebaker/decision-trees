@@ -164,10 +164,11 @@ def chi_sq_dist(dof, alpha):
 class ID3Tree(object):
     root = None
 
-    def __init__(self, dna_data=[], use_gini_index=False):
+    def __init__(self, dna_data=[], use_gini_index=False, alpha=0):
         self.root = ID3Node(None,
                             dna_data=dna_data,
-                            use_gini_index=use_gini_index)
+                            use_gini_index=use_gini_index,
+                            alpha=alpha)
 
         if dna_data:
             self.create_tree()
@@ -208,14 +209,17 @@ class ID3Node(object):
     cls = ''
 
     use_gini_index = False
+    alpha = 0
 
-    def __init__(self, parent, dna_data=[], value=0, use_gini_index=False):
+    def __init__(self, parent, dna_data=[], value=0,
+                 use_gini_index=False, alpha=0):
         self.parent = parent
         self.children = []
 
         self.value = value
         self.dna_data = dna_data
         self.use_gini_index = use_gini_index
+        self.alpha = alpha
         return
 
     def is_leaf(self):
@@ -239,7 +243,8 @@ class ID3Node(object):
         self.children.append(ID3Node(self,
                                      dna_data=dna_data,
                                      value=value,
-                                     use_gini_index=self.use_gini_index))
+                                     use_gini_index=self.use_gini_index,
+                                     alpha=self.alpha))
         return
 
     def get_class(self, attrs):
@@ -301,7 +306,7 @@ class ID3Node(object):
         # create children the get a subset of the data
         # based on the value of the data at the split attr
         for value in values:
-            split_data = get_subset(self.dna_data, value, split_attr)
+            split_data = get_subset(self.dna_data, value, self.attr)
             if split_data:
                 self.add_child(split_data, value)
             else:

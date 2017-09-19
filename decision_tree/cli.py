@@ -37,4 +37,10 @@ def parse_args():
         action='store_true',
         help='Whether or not to use gini-index instead of information gain.')
 
+    parser.add_argument(
+        '--alpha',
+        type=float,
+        default=0.05,
+        help='Alpha to use in chi-squared calculations.')
+
     return vars(parser.parse_args())
