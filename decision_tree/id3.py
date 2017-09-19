@@ -86,6 +86,20 @@ def dna_p_value(dna_data):
     except ZeroDivisionError:
         print ("empty list cannot produce probability")
 
+def dna_count_class(dna_data):
+    """counts the number of each class and returns them in this order - ei, ie 
+    and n """
+    ei_count = 0
+    ie_count = 0
+    n_count = 0
+    for dna in dna_data:
+        if dna['class'] == 'IE':
+            ie_count += 1
+        elif dna['class'] == 'EI':
+            ei_count += 1
+        else:
+            n_count += 1
+    return (ei_count, ie_count, n_count)
 
 def entropy(dna_data):
     p_values = dna_p_value(dna_data)
@@ -96,15 +110,29 @@ def entropy(dna_data):
             total -= p * math.log(p, 2)
     return total
 
+def rej_null_hyp(pNode, dof, alpha):
+    p_values =dna_p_value(pNode.dna_data)
+    e_count =[]
+    r_count =[]
+    for child in pNode.children:
+        child_total=0
+        class_count = dna_count_class(child.dna_data)
+        r_count.append(class_count[0]) 
+        r_count.append(class_count[1]) 
+        r_count.append(class_count[2])
+        child_total = sum(class_count)
+        e_count.append(p_values[0]*child_total)
+        e_count.append(p_values[1]*child_total)
+        e_count.append(p_values[2]*child_total)
+    return chi_square(e_count, r_count, dof, alpha) 
 
-def chi_square(e_values, o_values, dof, alpha):
+def chi_square(e_count, r_count, dof, alpha):
+    """takes the a list of expected counts for IE, EI and N 
+    (can be fractions) and the real counts"""
     x2 = chi_sq_dist(dof, alpha)
     xc2 = 0
     for i in range(0, dof+1):
-        xc2 += ((o_values[i] - e_values[i])**2) / e_values[i]
-
-    print(x2)
-    print(xc2)
+        xc2 += ((r_count[i] - e_count[i])**2) / e_count[i]
 
     # reject null hypothesis
     return not xc2 > x2
@@ -311,6 +339,8 @@ class ID3Node(object):
                 self.add_child(split_data, value)
             else:
                 self.add_child(self.dna_data, value)
+
+        #if rej_null_hyp(self, dof, alpha):
 
         # Recursively create subtrees
         for child in self.children:
