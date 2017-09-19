@@ -17,7 +17,9 @@ def gini_value(dna_data):
 
 def gini_gain(dna_data, values, attr):
     subset = get_subset(dna_data, values, attr)
-    gain = gini_value(dna_data) - gini_value(subset)
+    gain = 0
+    if subset:
+        gain = gini_value(dna_data) - gini_value(subset)
     return gain
 
 
@@ -163,7 +165,9 @@ class ID3Tree(object):
     root = None
 
     def __init__(self, dna_data=[], use_gini_index=False):
-        self.root = ID3Node(None, dna_data=dna_data, use_gini_index=False)
+        self.root = ID3Node(None,
+                            dna_data=dna_data,
+                            use_gini_index=use_gini_index)
 
         if dna_data:
             self.create_tree()
@@ -270,7 +274,6 @@ class ID3Node(object):
         # If no attrs are left to test,
         # then pick the class that occurs the most
         if not attrs:
-            print(len(self.dna_data))
             p_values = dna_p_value(self.dna_data)
             max_p = max(p_values)
             if p_values[0] is max_p:
@@ -285,7 +288,6 @@ class ID3Node(object):
         gain = []
         for attr in attrs:
             if self.use_gini_index:
-                # code for gini index here
                 gain.append(gini_gain(self.dna_data, values, attr))
             else:
                 gain.append(info_gain(self.dna_data, values, attr))
