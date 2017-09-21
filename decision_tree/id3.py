@@ -132,7 +132,11 @@ def chi_square(e_count, r_count, dof, alpha):
     x2 = chi_sq_dist(dof, alpha)
     xc2 = 0
     for i in range(0, dof+1):
-        xc2 += ((r_count[i] - e_count[i])**2) / e_count[i]
+        if e_count[i] != 0:
+            xc2 += ((r_count[i] - e_count[i])**2) / e_count[i]
+        #also tried not adding r_count submission score was unchanged
+        else:
+            xc2 += r_count[i]
 
     # reject null hypothesis
     return not xc2 > x2
@@ -340,7 +344,22 @@ class ID3Node(object):
             else:
                 self.add_child(self.dna_data, value)
 
-        #if rej_null_hyp(self, dof, alpha):
+        dof = 3
+        alpha = self.alpha
+
+        if rej_null_hyp(self, dof, alpha):
+            #prunechildren and classify node
+            self.children=[]
+            p_values = dna_p_value(self.dna_data)
+            max_p = max(p_values)
+            if p_values[0] is max_p:
+                self.cls = 'EI'
+            elif p_values[1] is max_p:
+                self.cls = 'IE'
+            else:
+                self.cls = 'N'
+            return
+
 
         # Recursively create subtrees
         for child in self.children:
