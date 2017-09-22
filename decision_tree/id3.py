@@ -4,49 +4,71 @@ from __future__ import division
 
 import math
 
+
 def gini_value(dna_data):
     """takes the probabilty of each classification and multiplies them together"""
     p_values = dna_p_value(dna_data)
     gini_value = 1
-    if p_values ==None:
+    if not p_values:
         return 0
     else:
-       for p in p_values:
-           gini_value*=p
-       return gini_value
+        for p in p_values:
+            gini_value *= p
+    return gini_value
+
 
 def gini_gain(dna_data, values, attr):
-    subset = get_subset(dna_data, values, attr)
+    subset = get_subset2(dna_data, values, attr)
     gain = 0
     if subset:
         gain = gini_value(dna_data) - gini_value(subset)
     return gain
 
 
-def data_class(dna_data):
+def is_same_class(dna_data):
     """Returns the class of the data if all the data shares the same class."""
     clses = [dna['class'] for dna in dna_data]
-    if clses.count(clses[0]) == len(clses):
-        return clses[0]
-    return None
+    return clses.count(clses[0]) == len(clses)
 
 
-def get_subset(dna_data, value, attr):
+def get_class(dna_data):
+    cls = ''
+    class_count = dna_count_class(dna_data)
+    max_count = max(class_count)
+    if class_count[0] is max_count:
+        cls = 'EI'
+    elif class_count[1] is max_count:
+        cls = 'IE'
+    else:
+        cls = 'N'
+    return cls
+
+
+def get_subset2(dna_data, value, attr):
+    """Gets a subset of the data where attr has the given value."""
+    subset = []
+    for dna in dna_data:
+        if dna['attrs'][attr] == value:
+            subset.append(dna)
+    return subset
+
+
+def get_subset2(dna_data, value, attr):
     """Gets a subset of the data where attr has the given value."""
     subset = []
     for dna in dna_data:
         if dna['attrs'][attr] == value:
             subset.append(dna)
         elif dna['attrs'][attr] == 'D':
-            if any([value=='A',value=='G',value=='T']):
+            if any([value == 'A', value == 'G', value == 'T']):
                 subset.append(dna)
         elif dna['attrs'][attr] == 'N':
             subset.append(dna)
         elif dna['attrs'][attr] == 'S':
-            if any([value=='C',value=='G']):
+            if any([value == 'C', value == 'G']):
                 subset.append(dna)
         elif dna['attrs'][attr] == 'R':
-            if any([value=='A',value=='G']):
+            if any([value == 'A', value == 'G']):
                 subset.append(dna)
     return subset
 
@@ -59,7 +81,7 @@ def info_gain(dna_data, values, attr):
     """
     sum_total = 0
     for value in values:
-        subset = get_subset(dna_data, value, attr)
+        subset = get_subset2(dna_data, value, attr)
         if subset:
             sum_total += (len(subset) / len(dna_data)) * entropy(subset)
 
@@ -86,9 +108,11 @@ def dna_p_value(dna_data):
     except ZeroDivisionError:
         print ("empty list cannot produce probability")
 
+
 def dna_count_class(dna_data):
-    """counts the number of each class and returns them in this order - ei, ie 
-    and n """
+    """counts the number of each class and returns them in this order - ei, ie
+    and n.
+    """
     ei_count = 0
     ie_count = 0
     n_count = 0
@@ -101,6 +125,7 @@ def dna_count_class(dna_data):
             n_count += 1
     return (ei_count, ie_count, n_count)
 
+
 def entropy(dna_data):
     p_values = dna_p_value(dna_data)
 
@@ -110,31 +135,33 @@ def entropy(dna_data):
             total -= p * math.log(p, 2)
     return total
 
+
 def rej_null_hyp(pNode, dof, alpha):
-    p_values =dna_p_value(pNode.dna_data)
-    e_count =[]
-    r_count =[]
+    p_values = dna_p_value(pNode.dna_data)
+    e_count = []
+    r_count = []
     for child in pNode.children:
-        child_total=0
+        child_total = 0
         class_count = dna_count_class(child.dna_data)
-        r_count.append(class_count[0]) 
-        r_count.append(class_count[1]) 
+        r_count.append(class_count[0])
+        r_count.append(class_count[1])
         r_count.append(class_count[2])
         child_total = sum(class_count)
         e_count.append(p_values[0]*child_total)
         e_count.append(p_values[1]*child_total)
         e_count.append(p_values[2]*child_total)
-    return chi_square(e_count, r_count, dof, alpha) 
+    return chi_square(e_count, r_count, dof, alpha)
+
 
 def chi_square(e_count, r_count, dof, alpha):
-    """takes the a list of expected counts for IE, EI and N 
+    """takes the a list of expected counts for IE, EI and N
     (can be fractions) and the real counts"""
     x2 = chi_sq_dist(dof, alpha)
     xc2 = 0
     for i in range(0, dof+1):
         if e_count[i] != 0:
             xc2 += ((r_count[i] - e_count[i])**2) / e_count[i]
-        #also tried not adding r_count submission score was unchanged
+        # also tried not adding r_count submission score was unchanged
         else:
             xc2 += r_count[i]
 
@@ -210,6 +237,7 @@ class ID3Tree(object):
         """Creates a new decision tree based on the given data."""
         attrs = list(range(0, len(self.root.dna_data[0]['attrs'])))
         values = ['A', 'G', 'T', 'C']
+        #values = ['A', 'G', 'T', 'C', 'D', 'N', 'S', 'R']
         self.root.create_subtree(values, attrs)
         return
 
@@ -298,27 +326,16 @@ class ID3Node(object):
             for child in self.children:
                 if child.value == attrs[self.attr]:
                     return child.get_class(attrs)
-        return None
+        return self.cls
 
     def create_subtree(self, values, attrs):
         # Check is all of the data is the same class, if it is,
         # then this is a leaf node with that class.
-        cls = data_class(self.dna_data)
-        if cls:
-            self.cls = cls
-            return
+        self.cls = get_class(self.dna_data)
 
         # If no attrs are left to test,
         # then pick the class that occurs the most
-        if not attrs:
-            p_values = dna_p_value(self.dna_data)
-            max_p = max(p_values)
-            if p_values[0] is max_p:
-                self.cls = 'EI'
-            elif p_values[1] is max_p:
-                self.cls = 'IE'
-            else:
-                self.cls = 'N'
+        if not attrs or not self.dna_data or is_same_class(self.dna_data):
             return
 
         # calculate the gain for each attr
@@ -338,28 +355,14 @@ class ID3Node(object):
         # create children the get a subset of the data
         # based on the value of the data at the split attr
         for value in values:
-            split_data = get_subset(self.dna_data, value, self.attr)
-            if split_data:
-                self.add_child(split_data, value)
-            else:
-                self.add_child(self.dna_data, value)
+            split_data = get_subset2(self.dna_data, value, self.attr)
+            self.add_child(split_data, value)
 
-        dof = 3
-        alpha = self.alpha
-
-        if rej_null_hyp(self, dof, alpha):
-            #prunechildren and classify node
-            self.children=[]
-            p_values = dna_p_value(self.dna_data)
-            max_p = max(p_values)
-            if p_values[0] is max_p:
-                self.cls = 'EI'
-            elif p_values[1] is max_p:
-                self.cls = 'IE'
-            else:
-                self.cls = 'N'
+        dof = len(values) - 1
+        if rej_null_hyp(self, dof, self.alpha):
+            # prunechildren and classify node
+            self.children = []
             return
-
 
         # Recursively create subtrees
         for child in self.children:
