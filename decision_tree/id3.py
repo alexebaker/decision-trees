@@ -333,6 +333,7 @@ class ID3Node(object):
         # then this is a leaf node with that class.
         if not self.dna_data:
             self.cls = get_class(self.parent.dna_data)
+            return
         else:
             self.cls = get_class(self.dna_data)
 
