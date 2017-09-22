@@ -18,10 +18,11 @@ def gini_value(dna_data):
 
 
 def gini_gain(dna_data, values, attr):
-    subset = get_subset2(dna_data, values, attr)
-    gain = 0
-    if subset:
-        gain = gini_value(dna_data) - gini_value(subset)
+    gain = gini_value(dna_data)
+    for value in values:
+        subset = get_subset2(dna_data, value, attr)
+        if subset:
+            gain -= gini_value(subset)
     return gain
 
 
