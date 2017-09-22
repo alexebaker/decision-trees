@@ -331,11 +331,14 @@ class ID3Node(object):
     def create_subtree(self, values, attrs):
         # Check is all of the data is the same class, if it is,
         # then this is a leaf node with that class.
-        self.cls = get_class(self.dna_data)
+        if not self.dna_data:
+            self.cls = get_class(self.parent.dna_data)
+        else:
+            self.cls = get_class(self.dna_data)
 
         # If no attrs are left to test,
         # then pick the class that occurs the most
-        if not attrs or not self.dna_data or is_same_class(self.dna_data):
+        if not attrs or is_same_class(self.dna_data):
             return
 
         # calculate the gain for each attr
