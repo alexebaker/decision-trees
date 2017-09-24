@@ -10,7 +10,7 @@ def parse_data(data_file):
     :type data_file: File Object
     :param data_file: A file object from the cli to parse into a data structure.
 
-    :rtype: ?
+    :rtype: dict
     :returns: A data structure with the parsed data from the data file.
     """
     data = []

@@ -10,6 +10,8 @@ Details about this project can be found on [Kaggle](https://inclass.kaggle.com/c
 
 ## Usage
 
+**NOTE**: This code will work with either python 2 or python 3.
+
 The main entry point for this project is `dtree.py`. Use the `-h` flag from any command to see help:
 
 ```bash

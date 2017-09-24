@@ -6,7 +6,16 @@ import math
 
 
 def gini_value(dna_data):
-    """takes the probabilty of each classification and multiplies them together"""
+    """Calculates the gini value for a set of dna data.
+
+    This calculates the gini value by taking the probabilty of each classification and multiplies them together.
+
+    :type dna_data: dict
+    :param dna_data: Set of parsed dna data.
+
+    :rtype: float
+    :returns: Calculated gini_value based on the dna data.
+    """
     p_values = dna_p_value(dna_data)
     gini_value = 1
     if not p_values:
@@ -18,21 +27,50 @@ def gini_value(dna_data):
 
 
 def gini_gain(dna_data, values, attr):
+    """Calculates the gain for a set of dna data based on the gini value.
+
+    :type dna_data: dict
+    :param dna_data: Set of parsed dna data.
+
+    :type values: list
+    :param values: List of values to calculate the gain accross
+
+    :type attr: int
+    :param attr: Attribute to calculate the gain for
+
+    :rtype: float
+    :returns: Calculated gain based on the gini value.
+    """
     gain = gini_value(dna_data)
     for value in values:
-        subset = get_subset2(dna_data, value, attr)
+        subset = get_subset(dna_data, value, attr)
         if subset:
             gain -= gini_value(subset)
     return gain
 
 
 def is_same_class(dna_data):
-    """Returns the class of the data if all the data shares the same class."""
+    """Returns the class of the data if all the data shares the same class.
+
+    :type dna_data: dict
+    :param dna_data: Set of parsed dna data.
+
+    :rtype: bool
+    :returns: True if the dna data is all the same class, False otherwise
+    """
     clses = [dna['class'] for dna in dna_data]
     return clses.count(clses[0]) == len(clses)
 
 
 def get_class(dna_data):
+    """Returns the class that occurs most frequently in the given dna data
+
+    :type dna_data: dict
+    :param dna_data: Set of parsed dna data.
+
+    :rtype: str
+    :returns: The most common dna class in the dna data
+    """
     cls = ''
     class_count = dna_count_class(dna_data)
     max_count = max(class_count)
@@ -45,31 +83,40 @@ def get_class(dna_data):
     return cls
 
 
-def get_subset2(dna_data, value, attr):
-    """Gets a subset of the data where attr has the given value."""
+def get_subset(dna_data, value, attr):
+    """Gets a subset of the data where attr has the given value.
+
+    :type dna_data: dict
+    :param dna_data: Set of parsed dna data.
+
+    :type values: list
+    :param values: List of dna values
+
+    :type attr: int
+    :param attr: Attribute in the dna data
+
+    :rtype: float
+    :returns: Calculated gain based on the gini value.
+    """
     subset = []
     for dna in dna_data:
         if dna['attrs'][attr] == value:
-            subset.append(dna)
-    return subset
-
-
-def get_subset2(dna_data, value, attr):
-    """Gets a subset of the data where attr has the given value."""
-    subset = []
-    for dna in dna_data:
-        if dna['attrs'][attr] == value:
+            # If the value of the attribute is what we are testing, add this dna to the subset
             subset.append(dna)
         elif dna['attrs'][attr] == 'D':
             if any([value == 'A', value == 'G', value == 'T']):
+                # D can take on A, G, T values, so add this dna to these subsets
                 subset.append(dna)
         elif dna['attrs'][attr] == 'N':
+            # N can take on any value, so add this dna to all subsets
             subset.append(dna)
         elif dna['attrs'][attr] == 'S':
             if any([value == 'C', value == 'G']):
+                # S can take on C and G values, so add this dna to these subsets
                 subset.append(dna)
         elif dna['attrs'][attr] == 'R':
             if any([value == 'A', value == 'G']):
+                # R can take on A and G values, so add this dna to these subsets
                 subset.append(dna)
     return subset
 
@@ -77,12 +124,21 @@ def get_subset2(dna_data, value, attr):
 def info_gain(dna_data, values, attr):
     """Calculates the information gain for the given parameters.
 
+    :type dna_data: dict
+    :param dna_data: Set of parsed dna data.
+
+    :type values: list
+    :param values: List of values to calculate the gain accross
+
+    :type attr: int
+    :param attr: Attribute to calculate the gain for
+
     :rtype: float
     :returns: The calculated information gain for the given parameters.
     """
     sum_total = 0
     for value in values:
-        subset = get_subset2(dna_data, value, attr)
+        subset = get_subset(dna_data, value, attr)
         if subset:
             sum_total += (len(subset) / len(dna_data)) * entropy(subset)
 
@@ -90,7 +146,13 @@ def info_gain(dna_data, values, attr):
 
 
 def dna_p_value(dna_data):
-    """Calculates probabilty of each of the 3 classes for a set of strands
+    """Calculates probabilty of each of the 3 classes for a set of strands.
+
+    :type dna_data: dict
+    :param dna_data: Set of parsed dna data.
+
+    :rtype: tuple
+    :returns: A tuple of the probability for (EI, IE, N)
     """
     ei_count = 0
     ie_count = 0
@@ -113,6 +175,12 @@ def dna_p_value(dna_data):
 def dna_count_class(dna_data):
     """counts the number of each class and returns them in this order - ei, ie
     and n.
+
+    :type dna_data: dict
+    :param dna_data: Set of parsed dna data.
+
+    :rtype: tuple
+    :returns: A tuple of the counts for (EI, IE, N)
     """
     ei_count = 0
     ie_count = 0
@@ -128,6 +196,14 @@ def dna_count_class(dna_data):
 
 
 def entropy(dna_data):
+    """Calculates the entropy for a set of dna data
+
+    :type dna_data: dict
+    :param dna_data: Set of parsed dna data.
+
+    :rtype: float
+    :returns: The calculated entropy for a set of dna data
+    """
     p_values = dna_p_value(dna_data)
 
     total = 0
@@ -138,6 +214,20 @@ def entropy(dna_data):
 
 
 def rej_null_hyp(pNode, dof, alpha):
+    """Calculates the counts needed to use chi_square.
+
+    :type pNode: ID3Node
+    :param pNode: Node to calculate chi squared for
+
+    :type dof: int
+    :param dof: Degrees of freedom of the data
+
+    :type alpha: float
+    :param alpha: alpha value to use in the lookup table
+
+    :rtype: bool
+    :returns: Whether or not to split at the given branch
+    """
     p_values = dna_p_value(pNode.dna_data)
     e_count = []
     r_count = []
@@ -156,7 +246,23 @@ def rej_null_hyp(pNode, dof, alpha):
 
 def chi_square(e_count, r_count, dof, alpha):
     """takes the a list of expected counts for IE, EI and N
-    (can be fractions) and the real counts"""
+    (can be fractions) and the real counts.
+
+    :type e_count: int
+    :param e_count: e_count value
+
+    :type r_count: int
+    :param r_count: r_count value
+
+    :type dof: int
+    :param dof: Degrees of freedom of the data
+
+    :type alpha: float
+    :param alpha: alpha value to use in the lookup table
+
+    :rtype: bool
+    :returns: The result of the chi squared test
+    """
     x2 = chi_sq_dist(dof, alpha)
     xc2 = 0
     for i in range(0, dof+1):
@@ -171,6 +277,18 @@ def chi_square(e_count, r_count, dof, alpha):
 
 
 def chi_sq_dist(dof, alpha):
+    """Calculates the critical value for chi squared.
+
+
+    :type dof: int
+    :param dof: Degrees of freedom of the data
+
+    :type alpha: float
+    :param alpha: alpha value to use in the lookup table
+
+    :rtype: float
+    :returns: The critical value based on the lookup table
+    """
     dof2 = [
         {'alpha': 0.20, 'crit_val': 3.219},
         {'alpha': 0.10, 'crit_val': 4.605},
@@ -330,16 +448,23 @@ class ID3Node(object):
         return self.cls
 
     def create_subtree(self, values, attrs):
-        # Check is all of the data is the same class, if it is,
-        # then this is a leaf node with that class.
+        """Main sub routine that creates the decision tree.
+
+        :type values: list
+        :param values: List of values to use for creating the tree
+
+        :type attrs: str
+        :param attrs: Attrs to use to create this subtree
+        """
+        # If no dna data was given to this child, then use the data at the parent node
         if not self.dna_data:
-            self.cls = get_class(self.parent.dna_data)
+            self.cls = self.parent.cls
             return
         else:
             self.cls = get_class(self.dna_data)
 
-        # If no attrs are left to test,
-        # then pick the class that occurs the most
+        # If no attrs are left to test, then stop making children
+        # Or if the dna has all the same class
         if not attrs or is_same_class(self.dna_data):
             return
 
@@ -360,12 +485,12 @@ class ID3Node(object):
         # create children the get a subset of the data
         # based on the value of the data at the split attr
         for value in values:
-            split_data = get_subset2(self.dna_data, value, self.attr)
+            split_data = get_subset(self.dna_data, value, self.attr)
             self.add_child(split_data, value)
 
         dof = len(values) - 1
         if rej_null_hyp(self, dof, self.alpha):
-            # prunechildren and classify node
+            # prunechildren
             self.children = []
             return
 
