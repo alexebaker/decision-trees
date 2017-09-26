@@ -98,8 +98,65 @@ def get_subset(dna_data, value, attr):
     :rtype: float
     :returns: Calculated gain based on the gini value.
     """
+    a_count = 0
+    c_count = 0
+    g_count = 0
+    t_count = 0
+    for dna in dna_data:
+        if dna['attrs'][attr] == 'A':
+            a_count +=1
+        elif dna['attrs'][attr] == 'C':
+            c_count +=1
+        elif dna['attrs'][attr] == 'G':
+            g_count +=1
+        elif dna['attrs'][attr] == 'T':
+            t_count +=1
+        else:
+            continue
+
     subset = []
     for dna in dna_data:
+        if dna['attrs'][attr] == value:
+            # If the value of the attribute is what we are testing, add this dna to the subset
+            subset.append(dna)
+        elif dna['attrs'][attr] == 'D':
+            if (value == 'A')and(a_count>=g_count)and(a_count>=t_count):
+                # value is A and A is most probable
+                subset.append(dna)
+            elif (value == 'G')and(g_count>a_count)and(g_count>t_count):
+                # value is G and G is most probable
+                subset.append(dna)
+            elif (value == 'T')and(t_count>a_count)and(t_count>g_count):
+                # value is T and T is most probable
+                subset.append(dna)
+        elif dna['attrs'][attr] == 'N':
+            if (value == 'A')and(a_count>=c_count)and(a_count>=g_count)and(a_count>=t_count):
+                # value is A and A is most probable
+                subset.append(dna)
+            elif (value == 'C')and(c_count>a_count)and(c_count>g_count)and(c_count>t_count):
+                # value is C and C is most probable
+                subset.append(dna)
+            elif (value == 'G')and(g_count>c_count)and(g_count>a_count)and(g_count>t_count):
+                # value is G and G is most probable
+                subset.append(dna)
+            elif (value == 'T')and(t_count>c_count)and(t_count>a_count)and(t_count>g_count):
+                # value is T and T is most probable
+                subset.append(dna)
+        elif dna['attrs'][attr] == 'S':
+            if (value == 'C')and(c_count>=g_count):
+                # value is C and C is most probable
+                subset.append(dna)
+            elif (value == 'G')and(g_count>c_count):
+                # value is G and G is most probable
+                subset.append(dna)
+        elif dna['attrs'][attr] == 'R':
+            if (value == 'A')and(a_count>=g_count):
+                # value is A and A is most probable
+                subset.append(dna)
+            elif (value == 'G')and(g_count>a_count):
+                # value is G and G is most probable
+                subset.append(dna)
+    """for dna in dna_data:
         if dna['attrs'][attr] == value:
             # If the value of the attribute is what we are testing, add this dna to the subset
             subset.append(dna)
@@ -117,7 +174,7 @@ def get_subset(dna_data, value, attr):
         elif dna['attrs'][attr] == 'R':
             if any([value == 'A', value == 'G']):
                 # R can take on A and G values, so add this dna to these subsets
-                subset.append(dna)
+                subset.append(dna)"""
     return subset
 
 
@@ -346,6 +403,18 @@ def chi_sq_dist(dof, alpha):
         {'alpha': 0.001, 'crit_val': 31.264}
     ]
 
+    dof14 = [
+        {'alpha': 0.20, 'crit_val': 18.151},
+        {'alpha': 0.10, 'crit_val': 21.064},
+        {'alpha': 0.05, 'crit_val': 23.685},
+        {'alpha': 0.025, 'crit_val': 26.119},
+        {'alpha': 0.02, 'crit_val': 26.873},
+        {'alpha': 0.01, 'crit_val': 29.141},
+        {'alpha': 0.005, 'crit_val': 31.319},
+        {'alpha': 0.002, 'crit_val': 34.091},
+        {'alpha': 0.001, 'crit_val': 36.123}
+    ]
+
     dofX = []
     if dof == 2:
         dofX = dof2
@@ -357,6 +426,8 @@ def chi_sq_dist(dof, alpha):
         dofX = dof7
     elif dof == 11:
         dofX = dof11
+    elif dof == 14:
+        dofX = dof14
     else:
         print ("Unsupported degree of freedom used!")
         return 0
