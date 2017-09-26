@@ -265,7 +265,7 @@ def chi_square(e_count, r_count, dof, alpha):
     """
     x2 = chi_sq_dist(dof, alpha)
     xc2 = 0
-    for i in range(0, dof+1):
+    for i in range(12):
         if e_count[i] != 0:
             xc2 += ((r_count[i] - e_count[i])**2) / e_count[i]
         # also tried not adding r_count submission score was unchanged
@@ -311,6 +311,17 @@ def chi_sq_dist(dof, alpha):
         {'alpha': 0.002, 'crit_val': 14.796},
         {'alpha': 0.001, 'crit_val': 16.266}
     ]
+    dof6 = [
+        {'alpha': 0.20, 'crit_val': 8.558},
+        {'alpha': 0.10, 'crit_val': 10.645},
+        {'alpha': 0.05, 'crit_val': 12.592},
+        {'alpha': 0.025, 'crit_val': 14.449},
+        {'alpha': 0.02, 'crit_val': 15.033},
+        {'alpha': 0.01, 'crit_val': 16.812},
+        {'alpha': 0.005, 'crit_val': 18.548},
+        {'alpha': 0.002, 'crit_val': 20.791},
+        {'alpha': 0.001, 'crit_val': 22.458}
+    ]
     dof7 = [
         {'alpha': 0.20, 'crit_val': 9.803},
         {'alpha': 0.10, 'crit_val': 12.017},
@@ -322,6 +333,7 @@ def chi_sq_dist(dof, alpha):
         {'alpha': 0.002, 'crit_val': 22.601},
         {'alpha': 0.001, 'crit_val': 24.322}
     ]
+
     dof11 = [
         {'alpha': 0.20, 'crit_val': 14.631},
         {'alpha': 0.10, 'crit_val': 17.275},
@@ -339,6 +351,8 @@ def chi_sq_dist(dof, alpha):
         dofX = dof2
     elif dof == 3:
         dofX = dof3
+    elif dof == 6:
+        dofX = dof6
     elif dof == 7:
         dofX = dof7
     elif dof == 11:
@@ -502,7 +516,7 @@ class ID3Node(object):
             self.add_child(split_data, value)
 
         #dof = len(values) - 1
-        dof=11
+        dof=6
         if rej_null_hyp(self, dof, self.alpha):
             # prunechildren
             self.children = []
