@@ -43,7 +43,7 @@ def gini_gain(dna_data, values, attr):
     """
     gain = gini_value(dna_data)
     for value in values:
-        subset = get_subset(dna_data, value, attr)
+        subset = get_subset2(dna_data, value, attr)
         if subset:
             gain -= gini_value(subset)
     return gain
@@ -83,7 +83,7 @@ def get_class(dna_data):
     return cls
 
 
-def get_subset(dna_data, value, attr):
+def get_subset2(dna_data, value, attr):
     """Gets a subset of the data where attr has the given value.
 
     :type dna_data: dict
@@ -178,6 +178,29 @@ def get_subset(dna_data, value, attr):
     return subset
 
 
+def get_subset22(dna_data, value, attr):
+    """Gets a subset of the data where attr has the given value.
+
+    :type dna_data: dict
+    :param dna_data: Set of parsed dna data.
+
+    :type values: list
+    :param values: List of dna values
+
+    :type attr: int
+    :param attr: Attribute in the dna data
+
+    :rtype: float
+    :returns: Calculated gain based on the gini value.
+    """
+    subset = []
+    for dna in dna_data:
+        if dna['attrs'][attr] == value:
+            # If the value of the attribute is what we are testing, add this dna to the subset
+            subset.append(dna)
+    return subset
+
+
 def info_gain(dna_data, values, attr):
     """Calculates the information gain for the given parameters.
 
@@ -195,7 +218,7 @@ def info_gain(dna_data, values, attr):
     """
     sum_total = 0
     for value in values:
-        subset = get_subset(dna_data, value, attr)
+        subset = get_subset2(dna_data, value, attr)
         if subset:
             sum_total += (len(subset) / len(dna_data)) * entropy(subset)
 
@@ -322,7 +345,7 @@ def chi_square(e_count, r_count, dof, alpha):
     """
     x2 = chi_sq_dist(dof, alpha)
     xc2 = 0
-    for i in range(12):
+    for i in range(len(e_count)):
         if e_count[i] != 0:
             xc2 += ((r_count[i] - e_count[i])**2) / e_count[i]
         # also tried not adding r_count submission score was unchanged
@@ -453,8 +476,8 @@ class ID3Tree(object):
     def create_tree(self):
         """Creates a new decision tree based on the given data."""
         attrs = list(range(0, len(self.root.dna_data[0]['attrs'])))
-        values = ['A', 'G', 'T', 'C']
-        #values = ['A', 'G', 'T', 'C', 'D', 'N', 'S', 'R']
+        #values = ['A', 'G', 'T', 'C']
+        values = ['A', 'G', 'T', 'C', 'D', 'N', 'S', 'R']
         self.root.create_subtree(values, attrs)
         return
 
@@ -583,11 +606,11 @@ class ID3Node(object):
         # create children the get a subset of the data
         # based on the value of the data at the split attr
         for value in values:
-            split_data = get_subset(self.dna_data, value, self.attr)
+            split_data = get_subset2(self.dna_data, value, self.attr)
             self.add_child(split_data, value)
 
         #dof = len(values) - 1
-        dof=6
+        dof = 2 * (len(values) - 1)
         if rej_null_hyp(self, dof, self.alpha):
             # prunechildren
             self.children = []
