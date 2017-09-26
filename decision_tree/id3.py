@@ -322,6 +322,17 @@ def chi_sq_dist(dof, alpha):
         {'alpha': 0.002, 'crit_val': 22.601},
         {'alpha': 0.001, 'crit_val': 24.322}
     ]
+    dof11 = [
+        {'alpha': 0.20, 'crit_val': 14.631},
+        {'alpha': 0.10, 'crit_val': 17.275},
+        {'alpha': 0.05, 'crit_val': 19.675},
+        {'alpha': 0.025, 'crit_val': 21.920},
+        {'alpha': 0.02, 'crit_val': 22.618},
+        {'alpha': 0.01, 'crit_val': 24.725},
+        {'alpha': 0.005, 'crit_val': 26.757},
+        {'alpha': 0.002, 'crit_val': 29.354},
+        {'alpha': 0.001, 'crit_val': 31.264}
+    ]
 
     dofX = []
     if dof == 2:
@@ -330,6 +341,8 @@ def chi_sq_dist(dof, alpha):
         dofX = dof3
     elif dof == 7:
         dofX = dof7
+    elif dof == 11:
+        dofX = dof11
     else:
         print ("Unsupported degree of freedom used!")
         return 0
@@ -488,7 +501,8 @@ class ID3Node(object):
             split_data = get_subset(self.dna_data, value, self.attr)
             self.add_child(split_data, value)
 
-        dof = len(values) - 1
+        #dof = len(values) - 1
+        dof=11
         if rej_null_hyp(self, dof, self.alpha):
             # prunechildren
             self.children = []
