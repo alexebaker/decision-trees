@@ -83,101 +83,6 @@ def get_class(dna_data):
     return cls
 
 
-def get_subset(dna_data, value, attr):
-    """Gets a subset of the data where attr has the given value.
-
-    :type dna_data: dict
-    :param dna_data: Set of parsed dna data.
-
-    :type values: list
-    :param values: List of dna values
-
-    :type attr: int
-    :param attr: Attribute in the dna data
-
-    :rtype: float
-    :returns: Calculated gain based on the gini value.
-    """
-    a_count = 0
-    c_count = 0
-    g_count = 0
-    t_count = 0
-    for dna in dna_data:
-        if dna['attrs'][attr] == 'A':
-            a_count +=1
-        elif dna['attrs'][attr] == 'C':
-            c_count +=1
-        elif dna['attrs'][attr] == 'G':
-            g_count +=1
-        elif dna['attrs'][attr] == 'T':
-            t_count +=1
-        else:
-            continue
-
-    subset = []
-    for dna in dna_data:
-        if dna['attrs'][attr] == value:
-            # If the value of the attribute is what we are testing, add this dna to the subset
-            subset.append(dna)
-        elif dna['attrs'][attr] == 'D':
-            if (value == 'A')and(a_count>=g_count)and(a_count>=t_count):
-                # value is A and A is most probable
-                subset.append(dna)
-            elif (value == 'G')and(g_count>a_count)and(g_count>t_count):
-                # value is G and G is most probable
-                subset.append(dna)
-            elif (value == 'T')and(t_count>a_count)and(t_count>g_count):
-                # value is T and T is most probable
-                subset.append(dna)
-        elif dna['attrs'][attr] == 'N':
-            if (value == 'A')and(a_count>=c_count)and(a_count>=g_count)and(a_count>=t_count):
-                # value is A and A is most probable
-                subset.append(dna)
-            elif (value == 'C')and(c_count>a_count)and(c_count>g_count)and(c_count>t_count):
-                # value is C and C is most probable
-                subset.append(dna)
-            elif (value == 'G')and(g_count>c_count)and(g_count>a_count)and(g_count>t_count):
-                # value is G and G is most probable
-                subset.append(dna)
-            elif (value == 'T')and(t_count>c_count)and(t_count>a_count)and(t_count>g_count):
-                # value is T and T is most probable
-                subset.append(dna)
-        elif dna['attrs'][attr] == 'S':
-            if (value == 'C')and(c_count>=g_count):
-                # value is C and C is most probable
-                subset.append(dna)
-            elif (value == 'G')and(g_count>c_count):
-                # value is G and G is most probable
-                subset.append(dna)
-        elif dna['attrs'][attr] == 'R':
-            if (value == 'A')and(a_count>=g_count):
-                # value is A and A is most probable
-                subset.append(dna)
-            elif (value == 'G')and(g_count>a_count):
-                # value is G and G is most probable
-                subset.append(dna)
-    """for dna in dna_data:
-        if dna['attrs'][attr] == value:
-            # If the value of the attribute is what we are testing, add this dna to the subset
-            subset.append(dna)
-        elif dna['attrs'][attr] == 'D':
-            if any([value == 'A', value == 'G', value == 'T']):
-                # D can take on A, G, T values, so add this dna to these subsets
-                subset.append(dna)
-        elif dna['attrs'][attr] == 'N':
-            # N can take on any value, so add this dna to all subsets
-            subset.append(dna)
-        elif dna['attrs'][attr] == 'S':
-            if any([value == 'C', value == 'G']):
-                # S can take on C and G values, so add this dna to these subsets
-                subset.append(dna)
-        elif dna['attrs'][attr] == 'R':
-            if any([value == 'A', value == 'G']):
-                # R can take on A and G values, so add this dna to these subsets
-                subset.append(dna)"""
-    return subset
-
-
 def get_subset2(dna_data, value, attr):
     """Gets a subset of the data where attr has the given value.
 
@@ -369,28 +274,6 @@ def chi_sq_dist(dof, alpha):
     :rtype: float
     :returns: The critical value based on the lookup table
     """
-    dof2 = [
-        {'alpha': 0.20, 'crit_val': 3.219},
-        {'alpha': 0.10, 'crit_val': 4.605},
-        {'alpha': 0.05, 'crit_val': 5.991},
-        {'alpha': 0.025, 'crit_val': 7.378},
-        {'alpha': 0.02, 'crit_val': 7.824},
-        {'alpha': 0.01, 'crit_val': 9.210},
-        {'alpha': 0.005, 'crit_val': 10.597},
-        {'alpha': 0.002, 'crit_val': 12.429},
-        {'alpha': 0.001, 'crit_val': 13.816}
-    ]
-    dof3 = [
-        {'alpha': 0.20, 'crit_val': 4.642},
-        {'alpha': 0.10, 'crit_val': 6.251},
-        {'alpha': 0.05, 'crit_val': 7.815},
-        {'alpha': 0.025, 'crit_val': 9.348},
-        {'alpha': 0.02, 'crit_val': 9.837},
-        {'alpha': 0.01, 'crit_val': 11.345},
-        {'alpha': 0.005, 'crit_val': 12.838},
-        {'alpha': 0.002, 'crit_val': 14.796},
-        {'alpha': 0.001, 'crit_val': 16.266}
-    ]
     dof6 = [
         {'alpha': 0.20, 'crit_val': 8.558},
         {'alpha': 0.10, 'crit_val': 10.645},
@@ -401,29 +284,6 @@ def chi_sq_dist(dof, alpha):
         {'alpha': 0.005, 'crit_val': 18.548},
         {'alpha': 0.002, 'crit_val': 20.791},
         {'alpha': 0.001, 'crit_val': 22.458}
-    ]
-    dof7 = [
-        {'alpha': 0.20, 'crit_val': 9.803},
-        {'alpha': 0.10, 'crit_val': 12.017},
-        {'alpha': 0.05, 'crit_val': 14.067},
-        {'alpha': 0.025, 'crit_val': 16.013},
-        {'alpha': 0.02, 'crit_val': 16.622},
-        {'alpha': 0.01, 'crit_val': 18.475},
-        {'alpha': 0.005, 'crit_val': 20.278},
-        {'alpha': 0.002, 'crit_val': 22.601},
-        {'alpha': 0.001, 'crit_val': 24.322}
-    ]
-
-    dof11 = [
-        {'alpha': 0.20, 'crit_val': 14.631},
-        {'alpha': 0.10, 'crit_val': 17.275},
-        {'alpha': 0.05, 'crit_val': 19.675},
-        {'alpha': 0.025, 'crit_val': 21.920},
-        {'alpha': 0.02, 'crit_val': 22.618},
-        {'alpha': 0.01, 'crit_val': 24.725},
-        {'alpha': 0.005, 'crit_val': 26.757},
-        {'alpha': 0.002, 'crit_val': 29.354},
-        {'alpha': 0.001, 'crit_val': 31.264}
     ]
 
     dof14 = [
@@ -439,16 +299,8 @@ def chi_sq_dist(dof, alpha):
     ]
 
     dofX = []
-    if dof == 2:
-        dofX = dof2
-    elif dof == 3:
-        dofX = dof3
-    elif dof == 6:
+    if dof == 6:
         dofX = dof6
-    elif dof == 7:
-        dofX = dof7
-    elif dof == 11:
-        dofX = dof11
     elif dof == 14:
         dofX = dof14
     else:
