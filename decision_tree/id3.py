@@ -43,12 +43,12 @@ def gini_gain(dna_data, values, attr):
     """
     #gain = gini_value(dna_data)
     size = len(dna_data)
-    gain=0
+    sum_total=0
     for value in values:
         subset = get_subset2(dna_data, value, attr)
         if subset:
-            gain -= (len(subset)/size)*gini_value(subset)
-    return gain
+            sum_total += (len(subset)/size)*gini_value(subset)
+    return gini_value(dna_data)-sum_total
 
 
 def is_same_class(dna_data):
