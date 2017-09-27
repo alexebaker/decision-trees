@@ -17,13 +17,13 @@ def gini_value(dna_data):
     :returns: Calculated gini_value based on the dna data.
     """
     p_values = dna_p_value(dna_data)
-    gini_value = 1
+    gini_value = 0
     if not p_values:
-        return 0
+        return 1
     else:
         for p in p_values:
-            gini_value *= p
-    return gini_value
+            gini_value += p*p
+    return 1-gini_value
 
 
 def gini_gain(dna_data, values, attr):
@@ -41,11 +41,13 @@ def gini_gain(dna_data, values, attr):
     :rtype: float
     :returns: Calculated gain based on the gini value.
     """
-    gain = gini_value(dna_data)
+    #gain = gini_value(dna_data)
+    size = len(dna_data)
+    gain=0
     for value in values:
         subset = get_subset2(dna_data, value, attr)
         if subset:
-            gain -= gini_value(subset)
+            gain -= (len(subset)/size)*gini_value(subset)
     return gain
 
 
