@@ -83,7 +83,7 @@ def get_class(dna_data):
     return cls
 
 
-def get_subset2(dna_data, value, attr):
+def get_subset(dna_data, value, attr):
     """Gets a subset of the data where attr has the given value.
 
     :type dna_data: dict
@@ -178,7 +178,7 @@ def get_subset2(dna_data, value, attr):
     return subset
 
 
-def get_subset22(dna_data, value, attr):
+def get_subset2(dna_data, value, attr):
     """Gets a subset of the data where attr has the given value.
 
     :type dna_data: dict
