@@ -40,7 +40,7 @@ def parse_args():
     parser.add_argument(
         '--alpha',
         type=float,
-        default=0.01,
+        default=0.05,
         help='Alpha to use in chi-squared calculations.')
 
     return vars(parser.parse_args())
