@@ -45,7 +45,7 @@ def gini_gain(dna_data, values, attr):
     size = len(dna_data)
     sum_total=0
     for value in values:
-        subset = get_subset2(dna_data, value, attr)
+        subset = get_subset(dna_data, value, attr)
         if subset:
             sum_total += (len(subset)/size)*gini_value(subset)
     return gini_value(dna_data)-sum_total
@@ -85,7 +85,7 @@ def get_class(dna_data):
     return cls
 
 
-def get_subset2(dna_data, value, attr):
+def get_subset(dna_data, value, attr):
     """Gets a subset of the data where attr has the given value.
 
     :type dna_data: dict
@@ -125,7 +125,7 @@ def info_gain(dna_data, values, attr):
     """
     sum_total = 0
     for value in values:
-        subset = get_subset2(dna_data, value, attr)
+        subset = get_subset(dna_data, value, attr)
         if subset:
             sum_total += (len(subset) / len(dna_data)) * entropy(subset)
 
@@ -460,7 +460,7 @@ class ID3Node(object):
         # create children the get a subset of the data
         # based on the value of the data at the split attr
         for value in values:
-            split_data = get_subset2(self.dna_data, value, self.attr)
+            split_data = get_subset(self.dna_data, value, self.attr)
             self.add_child(split_data, value)
 
         #dof = len(values) - 1
