@@ -18,12 +18,10 @@ def gini_value(dna_data):
     """
     p_values = dna_p_value(dna_data)
     gini_value = 0
-    if not p_values:
-        return 1
-    else:
+    if p_values:
         for p in p_values:
             gini_value += p*p
-    return 1-gini_value
+    return 1 - gini_value
 
 
 def gini_gain(dna_data, values, attr):
@@ -43,12 +41,12 @@ def gini_gain(dna_data, values, attr):
     """
     #gain = gini_value(dna_data)
     size = len(dna_data)
-    sum_total=0
+    sum_total = 0
     for value in values:
         subset = get_subset(dna_data, value, attr)
         if subset:
-            sum_total += (len(subset)/size)*gini_value(subset)
-    return gini_value(dna_data)-sum_total
+            sum_total += (len(subset)/size) * gini_value(subset)
+    return gini_value(dna_data) - sum_total
 
 
 def is_same_class(dna_data):
@@ -144,9 +142,8 @@ def dna_p_value(dna_data):
     ei_count = 0
     ie_count = 0
     n_count = 0
-    total = 0
+    total = len(dna_data)
     for dna in dna_data:
-        total += 1
         if dna['class'] == 'IE':
             ie_count += 1
         elif dna['class'] == 'EI':
