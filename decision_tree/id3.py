@@ -130,6 +130,38 @@ def info_gain(dna_data, values, attr):
     return entropy(dna_data) - sum_total
 
 
+def info_gain_ratio(dna_data, values, attr):
+    """Calculates the information gain for the given parameters.
+
+    :type dna_data: dict
+    :param dna_data: Set of parsed dna data.
+
+    :type values: list
+    :param values: List of values to calculate the gain accross
+
+    :type attr: int
+    :param attr: Attribute to calculate the gain for
+
+    :rtype: float
+    :returns: The calculated information gain for the given parameters.
+    """
+    gain_total = 0
+    split_total = 0
+    dna_total = len(dna_data)
+    for value in values:
+        subset = get_subset(dna_data, value, attr)
+        if subset:
+            ratio = len(subset) / dna_total
+            split_total -= ratio * math.log(ratio, 2)
+            gain_total += ratio * entropy(subset)
+
+    if split_total != 0:
+        gain = (entropy(dna_data) - gain_total) / split_total
+    else:
+        gain = entropy(dna_data) - gain_total
+    return gain
+
+
 def dna_p_value(dna_data):
     """Calculates probabilty of each of the 3 classes for a set of strands.
 
@@ -253,8 +285,6 @@ def chi_square(e_count, r_count, dof, alpha):
         if e_count[i] != 0:
             xc2 += ((r_count[i] - e_count[i])**2) / e_count[i]
         # also tried not adding r_count submission score was unchanged
-        else:
-            xc2 += r_count[i]
 
     # reject null hypothesis
     return not xc2 > x2
@@ -309,6 +339,7 @@ def chi_sq_dist(dof, alpha):
     for cv in dofX:
         if cv['alpha'] == alpha:
             return cv['crit_val']
+    return 0
 
 
 class ID3Tree(object):
